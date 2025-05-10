@@ -8,12 +8,11 @@ interface UndipLogoProps {
 const UndipLogo = ({ className }: UndipLogoProps) => {
   return (
     <div className={cn("flex items-center justify-center", className)}>
-      {/* This is a simplified representation of Undip logo */}
-      <div className="relative">
-        <div className="w-full h-full rounded-full border-4 border-undip-orange flex items-center justify-center bg-undip-blue text-white font-bold">
-          <div className="text-xs">UNDIP</div>
-        </div>
-      </div>
+      <img 
+        src="/lovable-uploads/96f2709b-0886-4a35-82a1-0ab5d0f2df12.png" 
+        alt="Universitas Diponegoro Logo" 
+        className={cn("h-full w-full object-contain", className)}
+      />
     </div>
   );
 };
