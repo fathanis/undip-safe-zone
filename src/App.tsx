@@ -13,6 +13,7 @@ import { LocationProvider } from "./contexts/LocationContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AdminRoute } from "./components/AdminRoute";
+import UserManagementPage from "./pages/UserManagementPage";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,11 @@ const App = () => (
               <Route path="/admin" element={
                 <AdminRoute>
                   <AdminPage />
+                </AdminRoute>
+              } />
+              <Route path="/admin/users" element={
+                <AdminRoute>
+                  <UserManagementPage />
                 </AdminRoute>
               } />
               <Route path="*" element={<NotFound />} />

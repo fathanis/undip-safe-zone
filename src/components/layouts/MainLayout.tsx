@@ -1,9 +1,9 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { AlertTriangle, User, LogOut } from "lucide-react";
+import { AlertTriangle, User, LogOut, Users } from "lucide-react";
 import UndipLogo from "@/components/UndipLogo";
 
 interface MainLayoutProps {
@@ -13,6 +13,7 @@ interface MainLayoutProps {
 const MainLayout = ({ children }: MainLayoutProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -20,7 +21,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     navigate("/");
   };
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || user?.role === 'petugas';
+  const isAdminPage = location.pathname === '/admin';
+  const isUserManagementPage = location.pathname === '/admin/users';
+  const canManageUsers = user?.role === 'admin'; // Only admin can manage users, not petugas
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -38,14 +42,27 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             {/* Desktop navigation */}
             <nav className="hidden md:flex items-center space-x-4">
               {isAdmin && (
-                <Button
-                  variant="ghost"
-                  className="text-white hover:bg-blue-700"
-                  onClick={() => navigate('/admin')}
-                >
-                  <AlertTriangle className="h-5 w-5 mr-2" />
-                  Dashboard
-                </Button>
+                <>
+                  <Button
+                    variant={isAdminPage ? "secondary" : "ghost"}
+                    className={isAdminPage ? "bg-blue-700 text-white" : "text-white hover:bg-blue-700"}
+                    onClick={() => navigate('/admin')}
+                  >
+                    <AlertTriangle className="h-5 w-5 mr-2" />
+                    Dashboard
+                  </Button>
+
+                  {canManageUsers && (
+                    <Button
+                      variant={isUserManagementPage ? "secondary" : "ghost"}
+                      className={isUserManagementPage ? "bg-blue-700 text-white" : "text-white hover:bg-blue-700"}
+                      onClick={() => navigate('/admin/users')}
+                    >
+                      <Users className="h-5 w-5 mr-2" />
+                      Manajemen User
+                    </Button>
+                  )}
+                </>
               )}
               
               <div className="flex items-center px-3 py-2 rounded-md bg-blue-700">
@@ -86,17 +103,33 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <div className="md:hidden pb-3 pt-2 border-t border-blue-700">
               <div className="flex flex-col space-y-3">
                 {isAdmin && (
-                  <Button
-                    variant="ghost"
-                    className="justify-start text-white hover:bg-blue-700"
-                    onClick={() => {
-                      navigate('/admin');
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <AlertTriangle className="h-5 w-5 mr-2" />
-                    Dashboard
-                  </Button>
+                  <>
+                    <Button
+                      variant={isAdminPage ? "secondary" : "ghost"}
+                      className={`justify-start ${isAdminPage ? "bg-blue-700" : "text-white hover:bg-blue-700"}`}
+                      onClick={() => {
+                        navigate('/admin');
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <AlertTriangle className="h-5 w-5 mr-2" />
+                      Dashboard
+                    </Button>
+                    
+                    {canManageUsers && (
+                      <Button
+                        variant={isUserManagementPage ? "secondary" : "ghost"}
+                        className={`justify-start ${isUserManagementPage ? "bg-blue-700" : "text-white hover:bg-blue-700"}`}
+                        onClick={() => {
+                          navigate('/admin/users');
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        <Users className="h-5 w-5 mr-2" />
+                        Manajemen User
+                      </Button>
+                    )}
+                  </>
                 )}
                 
                 <div className="flex items-center px-3 py-2">
