@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,8 +8,22 @@ import { toast } from "sonner";
 import MainLayout from "@/components/layouts/MainLayout";
 import AdminMapView from "@/components/AdminMapView";
 
-// Mock data for panic alerts
-const MOCK_PANIC_ALERTS = [
+// Define the PanicAlert interface first to properly type the mock data
+interface PanicAlert {
+  id: string;
+  userId: string;
+  name: string;
+  nim: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  timestamp: string;
+  status: 'new' | 'responding' | 'completed';
+}
+
+// Mock data for panic alerts - ensure status values match the PanicAlert type exactly
+const MOCK_PANIC_ALERTS: PanicAlert[] = [
   {
     id: '1',
     userId: '1',
@@ -48,19 +61,6 @@ const MOCK_PANIC_ALERTS = [
     status: 'completed',
   },
 ];
-
-interface PanicAlert {
-  id: string;
-  userId: string;
-  name: string;
-  nim: string;
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-  timestamp: string;
-  status: 'new' | 'responding' | 'completed';
-}
 
 const AdminPage = () => {
   const { user } = useAuth();
