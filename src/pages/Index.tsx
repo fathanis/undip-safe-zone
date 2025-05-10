@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,9 +11,9 @@ const Index = () => {
   useEffect(() => {
     if (user) {
       // If user is already logged in, navigate to appropriate dashboard
-      if (user.role === 'admin') {
+      if (user.role === 'admin' || user.role === 'petugas') {
         navigate('/admin');
-      } else {
+      } else if (user.role === 'mahasiswa') {
         navigate('/dashboard');
       }
     } else {

@@ -6,7 +6,7 @@ interface User {
   id: string;
   name: string;
   nim: string;
-  role: 'student' | 'admin';
+  role: 'mahasiswa' | 'petugas' | 'admin';
 }
 
 interface AuthContextType {
@@ -33,11 +33,18 @@ const MOCK_USERS = [
     name: 'Mahasiswa Undip',
     nim: '21120120140100',
     password: 'password123',
-    role: 'student' as const,
+    role: 'mahasiswa' as const,
   },
   {
     id: '2',
-    name: 'Admin Keamanan',
+    name: 'Petugas Keamanan',
+    nim: 'petugas',
+    password: 'petugas123',
+    role: 'petugas' as const,
+  },
+  {
+    id: '3',
+    name: 'Admin Sistem',
     nim: 'admin',
     password: 'admin123',
     role: 'admin' as const,

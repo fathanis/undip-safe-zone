@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,9 +16,9 @@ const LoginPage = () => {
 
   // If user is already logged in, redirect to appropriate page
   if (user) {
-    if (user.role === 'admin') {
+    if (user.role === 'admin' || user.role === 'petugas') {
       navigate('/admin');
-    } else {
+    } else if (user.role === 'mahasiswa') {
       navigate('/dashboard');
     }
   }
@@ -38,9 +37,12 @@ const LoginPage = () => {
       const success = await login(nim, password);
       
       if (success) {
-        const role = nim === 'admin' ? 'admin' : 'student';
         toast.success("Login berhasil!");
-        navigate(role === 'admin' ? '/admin' : '/dashboard');
+        if (nim === 'admin' || nim === 'petugas') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         toast.error("NIM atau password salah");
       }
@@ -68,10 +70,10 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="nim" className="text-sm font-medium">NIM</label>
+                <label htmlFor="nim" className="text-sm font-medium">NIM / Username</label>
                 <Input
                   id="nim"
-                  placeholder="Masukkan NIM"
+                  placeholder="Masukkan NIM atau username"
                   value={nim}
                   onChange={(e) => setNim(e.target.value)}
                   autoComplete="username"
@@ -105,7 +107,8 @@ const LoginPage = () => {
         </Card>
         
         <div className="text-center text-sm text-gray-500">
-          <p>Student demo: 21120120140100 / password123</p>
+          <p>Mahasiswa demo: 21120120140100 / password123</p>
+          <p>Petugas demo: petugas / petugas123</p>
           <p>Admin demo: admin / admin123</p>
         </div>
       </div>

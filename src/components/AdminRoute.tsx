@@ -13,7 +13,7 @@ export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }
     );
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!user || (user.role !== 'admin' && user.role !== 'petugas')) {
     return <Navigate to="/" replace />;
   }
 
