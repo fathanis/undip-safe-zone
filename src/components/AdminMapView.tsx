@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { MapPin } from "lucide-react";
 
 interface PanicAlert {
   id: string;
@@ -29,13 +30,12 @@ const AdminMapView = ({ alerts, activeAlert, setActiveAlert, onStatusChange }: A
   const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
-    // In a real application, you would initialize a map library like Google Maps or Leaflet here
-    setTimeout(() => {
+    // Simulate map loading
+    const timer = setTimeout(() => {
       setMapLoaded(true);
-    }, 1000);
+    }, 800);
     
-    // This would be where you'd set up the map and add markers for each alert
-    // For this demo, we'll simulate a map with a static image and overlay alert indicators
+    return () => clearTimeout(timer);
   }, []);
 
   const getStatusColor = (status: string) => {
@@ -80,42 +80,77 @@ const AdminMapView = ({ alerts, activeAlert, setActiveAlert, onStatusChange }: A
     <div className="h-full flex flex-col">
       <div className="relative flex-grow" ref={mapRef}>
         {!mapLoaded ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
             <div className="animate-spin inline-block w-8 h-8 border-4 border-current border-t-transparent text-undip-blue rounded-full" aria-hidden="true"></div>
             <span className="ml-2">Memuat peta...</span>
           </div>
         ) : (
-          <div className="absolute inset-0 bg-gray-200 rounded-md overflow-hidden">
-            {/* Simplified map representation - in a real app you would use Google Maps or similar */}
-            <div className="w-full h-full relative bg-[url('https://maps.googleapis.com/maps/api/staticmap?center=-7.052,110.44&zoom=15&size=1000x1000&scale=2&maptype=roadmap&style=feature:poi|visibility:off&key=YOUR_API_KEY')] bg-cover bg-center">
-              
-              {/* Campus area overlay */}
-              <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 border-2 border-undip-blue bg-blue-500 bg-opacity-10 rounded-lg flex items-center justify-center">
-                <div className="text-undip-blue font-bold text-sm p-1 bg-white bg-opacity-70 rounded">
+          <div className="absolute inset-0 bg-blue-50 rounded-md overflow-hidden">
+            {/* Simulated map - we'll use a custom styled div instead of an actual Google Map */}
+            <div className="w-full h-full relative bg-blue-50">
+              {/* Stylized campus area */}
+              <div className="absolute w-full h-full">
+                {/* Roads */}
+                <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-300"></div>
+                <div className="absolute top-0 bottom-0 left-1/3 w-1 bg-gray-300"></div>
+                <div className="absolute top-0 bottom-0 left-2/3 w-1 bg-gray-300"></div>
+                <div className="absolute top-1/4 left-0 right-0 h-1 bg-gray-300"></div>
+                <div className="absolute top-3/4 left-0 right-0 h-1 bg-gray-300"></div>
+                
+                {/* Water area */}
+                <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-blue-200 rounded-tl-3xl"></div>
+                
+                {/* Green areas */}
+                <div className="absolute top-1/4 left-1/3 w-1/3 h-1/4 bg-green-200 rounded-lg"></div>
+                <div className="absolute top-1/2 left-2/3 w-1/4 h-1/4 bg-green-200 rounded-lg"></div>
+                
+                {/* Campus buildings */}
+                <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/5 h-1/6 bg-gray-400 border border-gray-500 rounded-sm"></div>
+                <div className="absolute top-2/3 left-1/3 transform -translate-x-1/2 -translate-y-1/2 w-1/6 h-1/8 bg-gray-400 border border-gray-500 rounded-sm"></div>
+                <div className="absolute top-1/5 left-2/3 transform -translate-x-1/2 -translate-y-1/2 w-1/7 h-1/7 bg-gray-400 border border-gray-500 rounded-sm"></div>
+                
+                {/* Campus center label */}
+                <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mt-8 px-2 py-1 bg-white border border-gray-300 rounded text-xs z-10 shadow-sm">
                   Universitas Diponegoro
                 </div>
               </div>
               
               {/* Alert pins */}
               {alerts.map((alert) => {
-                // Calculate relative position on the "map" - this is just for demo
-                // In a real app, you would convert lat/long to map coordinates
+                // Create deterministic but distributed positions based on alert ID
+                const hashCode = (str: string) => {
+                  let hash = 0;
+                  for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                  }
+                  return hash;
+                };
                 
-                // Create random but fixed positions for demo
-                const seed = parseInt(alert.id) % 10;
-                const top = 20 + (seed * 5) + '%';
-                const left = 20 + ((seed * 7) % 60) + '%';
+                const seed = hashCode(alert.id);
+                const top = 20 + (Math.abs(seed) % 60) + '%';
+                const left = 20 + (Math.abs(seed * 13) % 60) + '%';
                 
                 const isActive = activeAlert?.id === alert.id;
                 
                 return (
                   <div 
                     key={alert.id}
-                    className={`absolute w-6 h-6 rounded-full flex items-center justify-center border-2 border-white cursor-pointer transform -translate-x-1/2 -translate-y-1/2 shadow-md ${getStatusColor(alert.status)} ${isActive ? 'w-8 h-8 z-10' : ''}`}
+                    className={`absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 ${isActive ? 'z-30' : ''}`}
                     style={{ top, left }}
                     onClick={() => setActiveAlert(alert)}
                   >
-                    <span className="text-white text-xs">{parseInt(alert.id)}</span>
+                    <div className={`flex flex-col items-center`}>
+                      <div className={`${getStatusColor(alert.status)} w-6 h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg ${isActive ? 'w-8 h-8 animate-pulse' : ''}`}>
+                        <MapPin className="text-white" size={isActive ? 18 : 14} />
+                      </div>
+                      {isActive && (
+                        <div className="mt-1 bg-black bg-opacity-75 text-white text-xs px-2 py-0.5 rounded whitespace-nowrap">
+                          {alert.name}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })}
